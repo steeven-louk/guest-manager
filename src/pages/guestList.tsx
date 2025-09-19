@@ -1,41 +1,18 @@
 import { useState } from "react";
 import { useGuestStore } from "../store/guestStore";
+import { FaSearch } from "react-icons/fa";
+import type { Guest } from "../types/ghestType";
 
 export default function GuestList() {
   const { guests, togglePresence } = useGuestStore();
   const [search, setSearch] = useState("");
-  const [showModal, setShowModal] = useState(false);
 
-  const filtered = guests.filter((g) =>
+  const filtered = guests.filter((g:Guest) =>
     g.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <header className="bg-background-light dark:bg-background-dark/70 backdrop-blur-sm sticky top-0 z-20 border-b border-black/10 dark:border-white/10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <div className="bg-primary text-white p-2 rounded-full">
-                <span className="material-symbols-outlined">festival</span>
-              </div>
-              <h1 className="text-lg font-bold text-black/90 dark:text-white/90">
-                Guest Manager
-              </h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                className="flex items-center justify-center gap-2 bg-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
-                onClick={() => setShowModal(true)}
-              >
-                <span className="material-symbols-outlined">add</span>
-                <span>Ajouter un invité</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
 
       {/* Main */}
       <main className="flex-grow">
@@ -54,7 +31,8 @@ export default function GuestList() {
             <div className="mb-6">
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40">
-                  search
+                  <FaSearch />
+
                 </span>
                 <input
                   className="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary text-black/90 dark:text-white/90 placeholder-black/40 dark:placeholder-white/40"
@@ -75,16 +53,14 @@ export default function GuestList() {
                       <th className="px-6 py-4 font-semibold text-black/80 dark:text-white/80">
                         Nom
                       </th>
-                      <th className="px-6 py-4 font-semibold text-black/80 dark:text-white/80">
-                        Email
-                      </th>
+                     
                       <th className="px-6 py-4 font-semibold text-black/80 dark:text-white/80 text-center">
                         Participant
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                    {filtered.map((guest) => (
+                    {filtered.map((guest:Guest) => (
                       <tr
                         key={guest.id}
                         className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
@@ -92,9 +68,7 @@ export default function GuestList() {
                         <td className="px-6 py-4 whitespace-nowrap text-black/80 dark:text-white/80">
                           {guest.name}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-black/80 dark:text-white/80">
-                          {guest.email}
-                        </td>
+
                         <td className="px-6 py-4 text-center">
                           <label className="inline-flex items-center cursor-pointer">
                             <input
@@ -110,7 +84,7 @@ export default function GuestList() {
                     {filtered.length === 0 && (
                       <tr>
                         <td
-                          colSpan="3"
+                          colSpan={3}
                           className="text-center py-6 text-black/60 dark:text-white/60"
                         >
                           Aucun invité trouvé
@@ -124,91 +98,6 @@ export default function GuestList() {
           </div>
         </div>
       </main>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-background-light dark:bg-background-dark rounded-xl shadow-lg w-full max-w-md m-4">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-black/90 dark:text-white/90">
-                  Ajouter un nouvel invité
-                </h3>
-                <button
-                  className="text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
-                  onClick={() => setShowModal(false)}
-                >
-                  <span className="material-symbols-outlined">close</span>
-                </button>
-              </div>
-              <form>
-                <div className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="guestName"
-                      className="block text-sm font-medium text-black/70 dark:text-white/70 mb-1"
-                    >
-                      Nom
-                    </label>
-                    <input
-                      id="guestName"
-                      name="guestName"
-                      type="text"
-                      placeholder="Entrez le nom complet"
-                      className="w-full px-4 py-2 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="guestEmail"
-                      className="block text-sm font-medium text-black/70 dark:text-white/70 mb-1"
-                    >
-                      Email
-                    </label>
-                    <input
-                      id="guestEmail"
-                      name="guestEmail"
-                      type="email"
-                      placeholder="Entrez l'adresse email"
-                      className="w-full px-4 py-2 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="guestNotes"
-                      className="block text-sm font-medium text-black/70 dark:text-white/70 mb-1"
-                    >
-                      Notes (optionnel)
-                    </label>
-                    <textarea
-                      id="guestNotes"
-                      name="guestNotes"
-                      rows="3"
-                      placeholder="Informations supplémentaires..."
-                      className="w-full px-4 py-2 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary"
-                    />
-                  </div>
-                </div>
-                <div className="mt-6 flex justify-end gap-3">
-                  <button
-                    type="button"
-                    className="px-4 py-2 rounded-lg bg-black/10 dark:bg-white/10 text-black/70 dark:text-white/70 font-semibold hover:bg-black/20 dark:hover:bg-white/20 transition-colors"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-lg bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
-                  >
-                    Enregistrer l'invité
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

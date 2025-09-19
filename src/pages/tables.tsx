@@ -1,38 +1,17 @@
 import { useState } from "react";
 import { useGuestStore } from "../store/guestStore";
+import { RxCross1 } from "react-icons/rx";
+import type { Guest } from "../types/ghestType";
 
 export default function Tables() {
-  const { guests } = useGuestStore();
+  const { guests, removeFromTable } = useGuestStore() as any ;
+
   const [showModal, setShowModal] = useState(false);
 
   const tables = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <header className="bg-background-light dark:bg-background-dark/70 backdrop-blur-sm sticky top-0 z-20 border-b border-black/10 dark:border-white/10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <div className="bg-primary text-white p-2 rounded-full">
-                <span className="material-symbols-outlined">festival</span>
-              </div>
-              <h1 className="text-lg font-bold text-black/90 dark:text-white/90">
-                Guest Manager
-              </h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                className="flex items-center justify-center gap-2 bg-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
-                onClick={() => setShowModal(true)}
-              >
-                <span className="material-symbols-outlined">add</span>
-                <span>Ajouter un invité</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
 
       {/* Main */}
       <main className="flex-grow">
@@ -46,49 +25,16 @@ export default function Tables() {
             </p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Colonne invités non assignés */}
-            <div className="lg:w-1/3 xl:w-1/4">
-              <div className="sticky top-24">
-                <div className="bg-background-light dark:bg-background-dark/50 border border-black/10 dark:border-white/10 rounded-xl">
-                  <div className="p-4 border-b border-black/10 dark:border-white/10">
-                    <h3 className="text-lg font-semibold text-black/90 dark:text-white/90">
-                      Invités non assignés
-                    </h3>
-                    <p className="text-sm text-black/60 dark:text-white/60">
-                      Glissez-déposez pour assigner
-                    </p>
-                  </div>
-                  <div className="p-4 space-y-3 h-96 overflow-y-auto">
-                    {guests
-                      .filter((g) => !g.table)
-                      .map((g) => (
-                        <div
-                          key={g.id}
-                          className="bg-white dark:bg-background-dark p-3 rounded-lg shadow-sm guest-item"
-                          draggable="true"
-                        >
-                          <p className="font-medium text-black/90 dark:text-white/90">
-                            {g.name}
-                          </p>
-                          <p className="text-sm text-black/60 dark:text-white/60">
-                            {g.email}
-                          </p>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className=" gap-8">
 
             {/* Colonne tables */}
-            <div className="lg:w-2/3 xl:w-3/4">
+            <div className=" lg:w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {tables.map((table, idx) => {
-                  const assigned = guests.filter((g) => g.table === table);
+                  const assigned = guests.filter((g:Guest) => g.table === table && g.present);
                   return (
                     <div
-                      key={table}
+                      key={idx+1}
                       className="bg-background-light dark:bg-background-dark/50 border border-black/10 dark:border-white/10 rounded-xl table-card flex flex-col"
                     >
                       <div className="p-4 border-b border-black/10 dark:border-white/10">
@@ -108,18 +54,18 @@ export default function Tables() {
                       </div>
                       <div className="p-4 space-y-3 flex-grow overflow-y-auto">
                         {assigned.length > 0 ? (
-                          assigned.map((g) => (
+                          assigned.map((g:Guest) => (
                             <div
                               key={g.id}
-                              className="bg-white dark:bg-background-dark p-3 rounded-lg shadow-sm flex justify-between items-center guest-item"
+                              className=" dark:bg-background-dark p-3 rounded-lg shadow-sm flex justify-between items-center guest-item"
                               draggable="true"
                             >
                               <p className="font-medium text-black/90 dark:text-white/90">
                                 {g.name}
                               </p>
-                              <button className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                              <button onClick={()=>removeFromTable(g.id)} className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
                                 <span className="material-symbols-outlined text-lg">
-                                  x
+                                  <RxCross1 />
                                 </span>
                               </button>
                             </div>
@@ -127,7 +73,7 @@ export default function Tables() {
                         ) : (
                           <div className="text-center py-8">
                             <p className="text-black/50 dark:text-white/50">
-                              Déposez un invité ici
+                             Aucun invité pour cette table
                             </p>
                           </div>
                         )}
@@ -174,21 +120,7 @@ export default function Tables() {
                       className="w-full px-4 py-2 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary text-black/90 dark:text-white/90 placeholder-black/40 dark:placeholder-white/40"
                     />
                   </div>
-                  <div>
-                    <label
-                      htmlFor="guestEmail"
-                      className="block text-sm font-medium text-black/70 dark:text-white/70 mb-1"
-                    >
-                      Email
-                    </label>
-                    <input
-                      id="guestEmail"
-                      name="guestEmail"
-                      type="email"
-                      placeholder="Entrez l'adresse email"
-                      className="w-full px-4 py-2 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary text-black/90 dark:text-white/90 placeholder-black/40 dark:placeholder-white/40"
-                    />
-                  </div>
+
                   <div>
                     <label
                       htmlFor="guestNotes"
@@ -199,7 +131,7 @@ export default function Tables() {
                     <textarea
                       id="guestNotes"
                       name="guestNotes"
-                      rows="3"
+                      rows={3}
                       placeholder="Informations supplémentaires..."
                       className="w-full px-4 py-2 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary text-black/90 dark:text-white/90 placeholder-black/40 dark:placeholder-white/40"
                     />

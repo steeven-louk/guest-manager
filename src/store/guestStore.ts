@@ -1,19 +1,35 @@
 import { create } from "zustand";
+import type { Guest } from "../types/ghestType";
 
-const initialGuests = [
-  { id: 1, name: "Sophia Clark", table: 1, present: false },
-  { id: 2, name: "Ethan Miller", table: 2, present: false },
-  { id: 3, name: "Olivia Davis", table: 1, present: false },
-  { id: 4, name: "Liam Wilson", table: 3, present: false },
-  { id: 5, name: "Ava Taylor", table: 4, present: true },
-];
+// Générer 120 invités répartis sur 12 tables (10 par table)
+const generateGuests = () => {
+  const guests = [];
+  for (let i = 1; i <= 120; i++) {
+    guests.push({
+      id: i,
+      name: `Invité ${i}`,
+    //   email: `invite${i}@example.com`,
+      table: Math.ceil(i / 10), // 10 invités par table
+      present: false,
+    });
+  }
+  return guests;
+};
 
 export const useGuestStore = create((set) => ({
-  guests: initialGuests,
+  guests: generateGuests(),
+
   togglePresence: (id:number) =>
-    set((state) => ({
-      guests: state.guests.map((g) =>
+    set((state: { guests: Guest[]; }) => ({
+      guests: state.guests.map((g:Guest) =>
         g.id === id ? { ...g, present: !g.present } : g
+      ),
+    })),
+
+  removeFromTable: (id:number) =>
+    set((state: { guests: Guest[]; }) => ({
+      guests: state.guests.map((g:Guest) =>
+        g.id === id ? { ...g, present: false } : g
       ),
     })),
 }));
