@@ -17,7 +17,7 @@ export default function GuestList() {
 
 
   if (isLoading) {
-    return <p className="text-center mt-8">Chargement des invités...</p>;
+    return <p className="text-center mt-8 animate-bounce">Chargement des invités...</p>;
   }
 
   if (error) {

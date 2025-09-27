@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGuestStore } from "../store/guestStore";
 import type { Guest } from "../types/ghestType";
 import { RxCross1 } from "react-icons/rx";
@@ -20,13 +20,20 @@ function matchesSearch(name: string, query: string) {
 }
 
 export default function Tables() {
-  const { guests, removeFromTable } = useGuestStore();
+  const { guests, removeFromTable, fetchGuests, isLoading } = useGuestStore();
   const [search, setSearch] = useState("");
-
+console.log(guests)
 
   const tables = Array.from(
-    new Set(guests.filter((g) => g.present && g.table).map((g) => g.table))
+    new Set(guests.filter((g:Guest) => g.present && g.table).map((g) => g.table))
   ).sort((a, b) => (a ?? 0) - (b ?? 0));
+
+    useEffect(() => {
+      fetchGuests(); // charge les invités au montage
+    }, [fetchGuests]);
+      if (isLoading) {
+    return <p className="text-center mt-8 animate-bounce">Chargement des tables...</p>;
+  }
 
   return (
     <div className="p-6 space-y-6">

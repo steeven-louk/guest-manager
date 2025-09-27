@@ -19,7 +19,8 @@ export const useGuestStore = create<GuestState>((set, get) => ({
 
   // Charger tous les invités
   fetchGuests: async () => {
-    set({ isLoading: true, error: null });
+    try {
+      set({ isLoading: true, error: null });
     const { data: guests, error } = await supabase
       .from("guests")
       .select()
@@ -34,11 +35,15 @@ export const useGuestStore = create<GuestState>((set, get) => ({
     } else {
       set({ guests: guests as Guest[], isLoading: false });
     }
+    } catch (error) {
+      console.log(error)
+    }
   },
 
   // Toggle presence et sauvegarde dans Supabase
   togglePresence: async (id: number) => {
-    const guest = get().guests.find((g) => g.id === id);
+   try {
+     const guest = get().guests.find((g) => g.id === id);
     if (!guest) return;
 
     const updatedPresence = !guest.present;
@@ -69,11 +74,15 @@ export const useGuestStore = create<GuestState>((set, get) => ({
       // recharge la liste depuis la DB pour être sûr
       await get().fetchGuests();
     }
+   } catch (error) {
+    console.log(error)
+   }
   },
 
   // Supprimer de la table (met "present" à false et supprime la table associée)
   removeFromTable: async (id: number) => {
-    const guest = get().guests.find((g) => g.id === id);
+   try {
+     const guest = get().guests.find((g) => g.id === id);
     if (!guest) return;
 
     // Optimistic update
@@ -101,5 +110,8 @@ export const useGuestStore = create<GuestState>((set, get) => ({
       await get().fetchGuests();
     }
 
+   } catch (error) {
+    console.log(error)
+   }
   },
 }));
