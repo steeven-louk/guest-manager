@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useGuestStore } from "../store/guestStore";
 import type { Guest } from "../types/ghestType";
 import { RxCross1 } from "react-icons/rx";
+import { FaUsers } from "react-icons/fa";
 
 function normalizeString(str: string) {
   return str
@@ -75,7 +76,7 @@ console.log(guests)
                   </h4>
                   <div className="flex items-center gap-2 text-black/70 dark:text-white/70">
                     <span className="material-symbols-outlined text-base">
-                      groupe
+                      <FaUsers size={20} />
                     </span>
                     <span className="font-medium">
                       {visible.length} / 10
