@@ -9,7 +9,7 @@ function App() {
     <>
       <Navbar />
         <Routes>
-          <Route index element={<GuestList />} />
+          <Route index path="/" element={<GuestList />} />
           <Route path="/tables" element={<Tables />} />
         </Routes>
     </>
