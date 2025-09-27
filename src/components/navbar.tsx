@@ -1,5 +1,6 @@
 
 import { MdManageAccounts } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
 
@@ -19,18 +20,18 @@ const Navbar = () => {
 
               {/* Liens de navigation */}
               <div className="flex items-center gap-6">
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="text-black/80 dark:text-white/80 hover:text-primary transition-colors font-medium"
                 >
                   Invités
-                </a>
-                <a
-                  href="/tables"
+                </Link>
+                <Link
+                  to="/tables"
                   className="text-black/80 dark:text-white/80 hover:text-primary transition-colors font-medium"
                 >
                   Tables
-                </a>
+                </Link>
               </div>
             </div>
           </div>

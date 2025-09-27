@@ -49,8 +49,8 @@ src/
 1. **Cloner le projet**
 
    ```bash
-   git clone https://github.com/steeven-louk/Guest_manager.git
-   cd Guest_manager
+   git clone https://github.com/steeven-louk/guest-manager.git
+   cd guest-manager
    ````
 
 2. **Installer les dépendances**
