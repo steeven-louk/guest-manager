@@ -23,7 +23,6 @@ function matchesSearch(name: string, query: string) {
 export default function Tables() {
   const { guests, removeFromTable, fetchGuests, isLoading } = useGuestStore();
   const [search, setSearch] = useState("");
-console.log(guests)
 
   const tables = Array.from(
     new Set(guests.filter((g:Guest) => g.present && g.table).map((g) => g.table))
@@ -32,6 +31,7 @@ console.log(guests)
     useEffect(() => {
       fetchGuests(); // charge les invités au montage
     }, [fetchGuests]);
+    
       if (isLoading) {
     return <p className="text-center mt-8 animate-bounce">Chargement des tables...</p>;
   }
