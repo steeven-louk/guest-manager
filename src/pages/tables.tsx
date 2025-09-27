@@ -1,162 +1,111 @@
-import { useState } from "react";
+"use client";
+import React, { useState } from "react";
 import { useGuestStore } from "../store/guestStore";
-import { RxCross1 } from "react-icons/rx";
 import type { Guest } from "../types/ghestType";
+import { RxCross1 } from "react-icons/rx";
+
+function normalizeString(str: string) {
+  return str
+    .normalize("NFD") // décompose les lettres accentuées
+    .replace(/[\u0300-\u036f]/g, "") // supprime les diacritiques
+    .toLowerCase();
+}
+
+function matchesSearch(name: string, query: string) {
+  const normName = normalizeString(name);
+  const words = normalizeString(query).split(" ").filter(Boolean);
+
+  // Chaque mot de la recherche doit être présent dans le nom
+  return words.every((word) => normName.includes(word));
+}
 
 export default function Tables() {
-  const { guests, removeFromTable } = useGuestStore() as any ;
+  const { guests, removeFromTable } = useGuestStore();
+  const [search, setSearch] = useState("");
 
-  const [showModal, setShowModal] = useState(false);
-
-  const tables = Array.from({ length: 12 }, (_, i) => i + 1);
+  const tables = Array.from(
+    new Set(guests.filter((g) => g.present && g.table).map((g) => g.table))
+  ).sort((a, b) => (a ?? 0) - (b ?? 0));
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="p-6 space-y-6">
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Rechercher par nom ou numéro de table..."
+        className="w-full p-2 border rounded-md mb-4"
+      />
 
-      {/* Main */}
-      <main className="flex-grow">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold text-black/90 dark:text-white/90 sm:text-4xl">
-              Gestion des Tables
-            </h2>
-            <p className="mt-2 text-black/60 dark:text-white/60">
-              Assignez les invités aux tables et organisez votre événement.
-            </p>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {tables.map((table, idx) => {
+          const assigned = guests.filter(
+            (g: Guest) => g.table === table && g.present
+          );
 
-          <div className=" gap-8">
+          const visible = assigned.filter((g: Guest) => {
+            if (!search) return true;
+            const query = normalizeString(search);
+            return (
+              matchesSearch(g.name, query) ||
+              (g.table && g.table.toString().includes(query))
+            );
+          });
 
-            {/* Colonne tables */}
-            <div className=" lg:w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {tables.map((table, idx) => {
-                  const assigned = guests.filter((g:Guest) => g.table === table && g.present);
-                  return (
+          // si recherche active et aucun résultat → on cache la carte
+          if (search && visible.length === 0) return null;
+
+          return (
+            <div
+              key={idx + 1}
+              className="bg-background-light dark:bg-background-dark/50 border border-black/10 dark:border-white/10 rounded-xl table-card flex flex-col"
+            >
+              <div className="p-4 border-b border-black/10 dark:border-white/10">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-lg font-semibold text-black/90 dark:text-white/90">
+                    Table {table}
+                  </h4>
+                  <div className="flex items-center gap-2 text-black/70 dark:text-white/70">
+                    <span className="material-symbols-outlined text-base">
+                      groupe
+                    </span>
+                    <span className="font-medium">
+                      {visible.length} / 10
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 space-y-3 flex-grow overflow-y-auto">
+                {visible.length > 0 ? (
+                  visible.map((g: Guest) => (
                     <div
-                      key={idx+1}
-                      className="bg-background-light dark:bg-background-dark/50 border border-black/10 dark:border-white/10 rounded-xl table-card flex flex-col"
+                      key={g.id}
+                      className="rounded-lg shadow-sm flex justify-between items-center"
                     >
-                      <div className="p-4 border-b border-black/10 dark:border-white/10">
-                        <div className="flex justify-between items-center">
-                          <h4 className="text-lg font-semibold text-black/90 dark:text-white/90">
-                            Table {table}
-                          </h4>
-                          <div className="flex items-center gap-2 text-black/70 dark:text-white/70">
-                            <span className="material-symbols-outlined text-base">
-                              group
-                            </span>
-                            <span className="font-medium">
-                              {assigned.length} / 10
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-4 space-y-3 flex-grow overflow-y-auto">
-                        {assigned.length > 0 ? (
-                          assigned.map((g:Guest) => (
-                            <div
-                              key={g.id}
-                              className=" dark:bg-background-dark p-3 rounded-lg shadow-sm flex justify-between items-center guest-item"
-                              draggable="true"
-                            >
-                              <p className="font-medium text-black/90 dark:text-white/90">
-                                {g.name}
-                              </p>
-                              <button onClick={()=>removeFromTable(g.id)} className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
-                                <span className="material-symbols-outlined text-lg">
-                                  <RxCross1 />
-                                </span>
-                              </button>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="text-center py-8">
-                            <p className="text-black/50 dark:text-white/50">
-                             Aucun invité pour cette table
-                            </p>
-                          </div>
-                        )}
-                      </div>
+                      <p className="font-medium pl-2 text-black/90 dark:text-white/90">
+                        {g.name}
+                      </p>
+                      <button
+                        onClick={() => removeFromTable(g.id)}
+                        className="text-red-500 bg-green-500 hover:text-red-700 transition-colors rounded-full"
+                      >
+                        <RxCross1 />
+                      </button>
                     </div>
-                  );
-                })}
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-black/50 dark:text-white/50">
+                      Aucun invité pour cette table
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        </div>
-      </main>
-
-      {/* Modal Ajouter invité */}
-      {showModal && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-background-light dark:bg-background-dark rounded-xl shadow-lg w-full max-w-md m-4">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-black/90 dark:text-white/90">
-                  Ajouter un nouvel invité
-                </h3>
-                <button
-                  className="text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
-                  onClick={() => setShowModal(false)}
-                >
-                  <span className="material-symbols-outlined">close</span>
-                </button>
-              </div>
-              <form>
-                <div className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="guestName"
-                      className="block text-sm font-medium text-black/70 dark:text-white/70 mb-1"
-                    >
-                      Nom
-                    </label>
-                    <input
-                      id="guestName"
-                      name="guestName"
-                      type="text"
-                      placeholder="Entrez le nom complet"
-                      className="w-full px-4 py-2 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary text-black/90 dark:text-white/90 placeholder-black/40 dark:placeholder-white/40"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="guestNotes"
-                      className="block text-sm font-medium text-black/70 dark:text-white/70 mb-1"
-                    >
-                      Notes (optionnel)
-                    </label>
-                    <textarea
-                      id="guestNotes"
-                      name="guestNotes"
-                      rows={3}
-                      placeholder="Informations supplémentaires..."
-                      className="w-full px-4 py-2 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary text-black/90 dark:text-white/90 placeholder-black/40 dark:placeholder-white/40"
-                    />
-                  </div>
-                </div>
-                <div className="mt-6 flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 rounded-lg bg-black/10 dark:bg-white/10 text-black/70 dark:text-white/70 font-semibold hover:bg-black/20 dark:hover:bg-white/20 transition-colors"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-lg bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
-                  >
-                    Enregistrer l'invité
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }

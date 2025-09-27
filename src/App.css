@@ -1,16 +1,13 @@
 @import "tailwindcss";
 #root {
-  /* max-width: 95%;
-  width: 100%; */
+  /* max-width: 95%;*/
+  width: 100%; 
   margin: 0 auto;
   /* padding: 2rem; */
   text-align: center;
 }
 
 
-.card {
-  padding: 2em;
-}
 
 .read-the-docs {
   color: #888;
@@ -29,6 +26,4 @@
         .table-card {
             min-height: 200px;
         }
-        .guest-item {
-            cursor: grab;
-        }
+       

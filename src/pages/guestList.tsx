@@ -1,23 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGuestStore } from "../store/guestStore";
 import { FaSearch } from "react-icons/fa";
 import type { Guest } from "../types/ghestType";
 
 export default function GuestList() {
-  const { guests, togglePresence } = useGuestStore();
+  const { guests, fetchGuests, togglePresence, isLoading, error } = useGuestStore();
   const [search, setSearch] = useState("");
+console.log(guests)
+  useEffect(() => {
+    fetchGuests(); // charge les invités au montage
+  }, [fetchGuests]);
 
-  const filtered = guests.filter((g:Guest) =>
+  const filtered = guests?.filter((g: Guest) =>
     g.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  console.log("filtered",filtered)
+
+  if (isLoading) {
+    return <p className="text-center mt-8">Chargement des invités...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center mt-8 text-red-500">Erreur : {error}</p>;
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
-
       {/* Main */}
       <main className="flex-grow">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl w-full mx-auto">
+            {/* Header */}
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold text-black/90 dark:text-white/90 sm:text-4xl">
                 Liste des invités
@@ -30,9 +44,8 @@ export default function GuestList() {
             {/* Search */}
             <div className="mb-6">
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40">
                   <FaSearch />
-
                 </span>
                 <input
                   className="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg focus:ring-primary focus:border-primary text-black/90 dark:text-white/90 placeholder-black/40 dark:placeholder-white/40"
@@ -53,14 +66,13 @@ export default function GuestList() {
                       <th className="px-6 py-4 font-semibold text-black/80 dark:text-white/80">
                         Nom
                       </th>
-                     
                       <th className="px-6 py-4 font-semibold text-black/80 dark:text-white/80 text-center">
                         Participant
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                    {filtered.map((guest:Guest) => (
+                    {filtered?.map((guest: Guest) => (
                       <tr
                         key={guest.id}
                         className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
@@ -68,7 +80,6 @@ export default function GuestList() {
                         <td className="px-6 py-4 whitespace-nowrap text-black/80 dark:text-white/80">
                           {guest.name}
                         </td>
-
                         <td className="px-6 py-4 text-center">
                           <label className="inline-flex items-center cursor-pointer">
                             <input
@@ -84,7 +95,7 @@ export default function GuestList() {
                     {filtered.length === 0 && (
                       <tr>
                         <td
-                          colSpan={3}
+                          colSpan={2}
                           className="text-center py-6 text-black/60 dark:text-white/60"
                         >
                           Aucun invité trouvé
@@ -95,6 +106,7 @@ export default function GuestList() {
                 </table>
               </div>
             </div>
+
           </div>
         </div>
       </main>
