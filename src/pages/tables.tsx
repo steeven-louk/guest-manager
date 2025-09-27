@@ -22,10 +22,8 @@ function matchesSearch(name: string, query: string) {
 export default function Tables() {
   const { guests, removeFromTable } = useGuestStore();
   const [search, setSearch] = useState("");
-/**
- * VITE_SUPABASE_URL="https://hddktthwcpgelbaukfsz.supabase.co"
-VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZGt0dGh3Y3BnZWxiYXVrZnN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NzI5NjAsImV4cCI6MjA3NDQ0ODk2MH0.jkkL-UzvSAQBocNhvtQYf7hIg4bxIARxfbR09vzwTss"
- */
+
+  
   const tables = Array.from(
     new Set(guests.filter((g) => g.present && g.table).map((g) => g.table))
   ).sort((a, b) => (a ?? 0) - (b ?? 0));
