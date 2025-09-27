@@ -85,6 +85,7 @@ src/
 ## 📸 Aperçu
 
 ![Aperçu de l'application](./public/screenshot.png)
+![Aperçu de l'application](./public/screenshot1.png)
 
 ---
 
