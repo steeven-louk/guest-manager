@@ -6,7 +6,7 @@ import type { Guest } from "../types/ghestType";
 export default function GuestList() {
   const { guests, fetchGuests, togglePresence, isLoading, error } = useGuestStore();
   const [search, setSearch] = useState("");
-console.log(guests)
+
   useEffect(() => {
     fetchGuests(); // charge les invités au montage
   }, [fetchGuests]);
@@ -15,7 +15,6 @@ console.log(guests)
     g.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  console.log("filtered",filtered)
 
   if (isLoading) {
     return <p className="text-center mt-8">Chargement des invités...</p>;

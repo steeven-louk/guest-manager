@@ -38,14 +38,6 @@ function App() {
               Tables
             </Link>
 
-            {/* Bouton Ajouter */}
-            {/* <button
-              className="flex items-center justify-center gap-2 bg-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
-              // onClick={onAddGuest}
-            >
-              <span className="material-symbols-outlined"><IoIosAddCircle /></span>
-              <span>Ajouter un invité</span>
-            </button> */}
           </div>
         </div>
       </div>

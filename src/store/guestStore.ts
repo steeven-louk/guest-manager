@@ -51,13 +51,12 @@ export const useGuestStore = create<GuestState>((set, get) => ({
       ),
     }));
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("guests")
       .update({ present: updatedPresence })
       .eq("id", id);
 
-    console.log("data toggle", data);
-
+      
     if (error) {
       console.error("Erreur update:", error);
       // rollback si erreur
