@@ -23,7 +23,7 @@ export default function Tables() {
   const { guests, removeFromTable } = useGuestStore();
   const [search, setSearch] = useState("");
 
-  
+
   const tables = Array.from(
     new Set(guests.filter((g) => g.present && g.table).map((g) => g.table))
   ).sort((a, b) => (a ?? 0) - (b ?? 0));

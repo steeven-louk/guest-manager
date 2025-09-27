@@ -51,7 +51,7 @@ src/
    ```bash
    git clone https://github.com/steeven-louk/Guest_manager.git
    cd Guest_manager
-    ````
+   ````
 
 2. **Installer les dépendances**
 
