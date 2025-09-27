@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useGuestStore } from "../store/guestStore";
 import type { Guest } from "../types/ghestType";
 import { RxCross1 } from "react-icons/rx";
