@@ -34,7 +34,7 @@ Elle inclut un moteur de recherche avancé pour retrouver rapidement les invité
 src/
 ├─ components/
 │   └─ Tables.tsx        # Composant principal de gestion des tables
-|    └─ guestList.tsx        # Liste de tout les invités
+│   └─ guestList.tsx        # Liste de tout les invités
 ├─ store/
 │   └─ guestStore.ts     # Store Zustand pour les invités
 ├─ types/
@@ -47,10 +47,11 @@ src/
 ## ⚙️ Installation
 
 1. **Cloner le projet**
+
    ```bash
    git clone https://github.com/steeven-louk/Guest_manager.git
    cd Guest_manager
-````
+    ````
 
 2. **Installer les dépendances**
 
